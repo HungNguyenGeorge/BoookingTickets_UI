@@ -11,7 +11,6 @@ import { useMsal } from "@azure/msal-react";
 import useResponsive from '../hooks/useResponsive';
 // components
 import Logo from '../components/logo';
-// import Iconify from '../components/iconify';
 // sections
 import { LoginForm } from '../sections/auth/login';
 import Iconify from '../components/iconify';
@@ -59,12 +58,6 @@ export default function LoginPage() {
       navigate('/dashboard');
     }
   }, [accounts.length]);
-
-
-  const handleLogin = (loginType) => {
-    console.log("🚀 ~ file: LoginPage.tsx:64 ~ handleLogin ~ loginType", loginType)
-
-  }
 
   return (
     <>

@@ -38,7 +38,7 @@ Nav.propTypes = {
 export default function Nav({ openNav, onCloseNav }) {
   const { pathname } = useLocation();
 
-  const isDesktop = useResponsive('up', 'lg');
+  const isDesktop = useResponsive('up', 'lg', null);
   const { instance, accounts } = useMsal();
 
   useEffect(() => {

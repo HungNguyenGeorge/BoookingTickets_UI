@@ -1,10 +1,14 @@
-import { useState } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 import { useMsal } from "@azure/msal-react";
 // @mui
-import { alpha } from '@mui/material/styles';
-import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
+import { alpha, styled } from '@mui/material/styles';
+import { Link, Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover, Drawer, Container, Button } from '@mui/material';
 // mocks_
 import account from '../../../_mock/account';
+import { AuthContext } from "../../../context/AuthContext";
+import { useNavigate } from 'react-router-dom';
+import { LoginForm } from '../../../sections/auth/login';
+import Iconify from '../../../components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -25,30 +29,56 @@ const MENU_OPTIONS = [
 
 // ----------------------------------------------------------------------
 
-export default function AccountPopover() {
-  const [open, setOpen] = useState(null);
+const StyledContent = styled('div')(({ theme }) => ({
+  maxWidth: 480,
+  margin: 'auto',
+  // minHeight: '100vh',
+  display: 'flex',
+  justifyContent: 'center',
+  flexDirection: 'column',
+  padding: theme.spacing(12, 0),
+}));
 
+export default function AccountPopover() {
+  const navigate = useNavigate();
+  const [openAccountPopover, setOpenAccountPopover] = useState(null);
+  const [openLogin, setOpenLogin] = useState(false);
+  const { user, dispatch } = useContext(AuthContext);
   const { instance, accounts } = useMsal();
-  const handleLogout = (logoutType) => {
-    if (logoutType === "popup") {
-      instance.logoutPopup({
-        postLogoutRedirectUri: "/",
-        // mainWindowRedirectUri: "/"
-      });
-    } else if (logoutType === "redirect") {
-      instance.logoutRedirect({
-        postLogoutRedirectUri: "/",
-      });
+
+  useEffect(() => {
+    if (user) {
+      setOpenLogin(false)
     }
+    return () => {
+      setOpenLogin(false)
+    }
+  }, [user])
+
+
+  const handleLogout = () => {
+    dispatch({ type: "LOGIN_START" })
   }
 
   const handleOpen = (event) => {
-    setOpen(event.currentTarget);
+    setOpenAccountPopover(event.currentTarget);
   };
 
   const handleClose = () => {
-    setOpen(null);
+    setOpenAccountPopover(null);
   };
+
+  const toggleOpenLogin = () => {
+    setOpenLogin(true);
+    toggleDrawer(true);
+    setOpenAccountPopover(false)
+  };
+
+  const toggleDrawer =
+    (open: boolean) =>
+      (event: React.KeyboardEvent | React.MouseEvent) => {
+        setOpenLogin(open);
+      };
 
   return (
     <>
@@ -56,7 +86,7 @@ export default function AccountPopover() {
         onClick={handleOpen}
         sx={{
           p: 0,
-          ...(open && {
+          ...(openAccountPopover && {
             '&:before': {
               zIndex: 1,
               content: "''",
@@ -73,8 +103,8 @@ export default function AccountPopover() {
       </IconButton>
 
       <Popover
-        open={Boolean(open)}
-        anchorEl={open}
+        open={Boolean(openAccountPopover)}
+        anchorEl={openAccountPopover}
         onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
@@ -83,7 +113,7 @@ export default function AccountPopover() {
             p: 0,
             mt: 1.5,
             ml: 0.75,
-            width: 180,
+            width: 250,
             '& .MuiMenuItem-root': {
               typography: 'body2',
               borderRadius: 0.75,
@@ -91,31 +121,97 @@ export default function AccountPopover() {
           },
         }}
       >
-        <Box sx={{ my: 1.5, px: 2.5 }}>
-          <Typography variant="subtitle2" noWrap>
-            {accounts[0]?.name || "-"}
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {accounts[0]?.username || "-"}
-          </Typography>
-        </Box>
+        {
+          user ? (
+            <>
+              <Box sx={{ my: 1.5, px: 2.5 }}>
+                <Typography variant="subtitle2" noWrap>
+                  {user?.fullname || "-"}
+                </Typography>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+                  {user?.email || "-"}
+                </Typography>
+              </Box>
 
-        <Divider sx={{ borderStyle: 'dashed' }} />
+              <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <Stack sx={{ p: 1 }}>
-          {MENU_OPTIONS.map((option) => (
-            <MenuItem key={option.label} onClick={handleClose}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </Stack>
+              <Stack sx={{ p: 1 }}>
+                {MENU_OPTIONS.map((option) => (
+                  <MenuItem key={option.label} onClick={handleClose}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Stack>
 
-        <Divider sx={{ borderStyle: 'dashed' }} />
+              <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem onClick={() => handleLogout("redirect")} sx={{ m: 1 }}>
-          Logout
-        </MenuItem>
+              <MenuItem onClick={() => handleLogout()} sx={{ m: 1 }}>
+                Logout
+              </MenuItem>
+            </>
+
+          ) : (
+            <>
+              <MenuItem onClick={_ => toggleOpenLogin()} sx={{ m: 1 }}>
+                Login
+              </MenuItem>
+              <MenuItem onClick={() => handleLogout()} sx={{ m: 1 }}>
+                Register
+              </MenuItem>
+            </>
+          )
+        }
       </Popover>
+
+
+      <div>
+        <Fragment>
+          <Drawer
+            anchor={"right"}
+            open={openLogin}
+            onClose={toggleDrawer(false)}
+            PaperProps={{
+
+              sx: {
+                width: 500,
+                p: 5
+              }
+            }}
+          >
+            <Container maxWidth="sm">
+              <StyledContent>
+                <Typography variant="h4" gutterBottom>
+                  Sign in to Booking
+                </Typography>
+
+                <Typography variant="body2" sx={{ mb: 5 }}>
+                  Don’t have an account? {''}
+                  <Link variant="subtitle2">Get started</Link>
+                </Typography>
+
+                <Stack direction="row" spacing={2}>
+                  <Button fullWidth size="large" color="inherit" variant="outlined">
+                    <Iconify icon="eva:facebook-fill" color="#1877F2" width={22} height={22} />
+                  </Button>
+
+                  <Button fullWidth size="large" color="inherit" variant="outlined">
+                    <Iconify icon="eva:twitter-fill" color="#1C9CEA" width={22} height={22} />
+                  </Button>
+                </Stack>
+
+                <Divider sx={{ my: 3 }}>
+                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    OR
+                  </Typography>
+                </Divider>
+
+                <LoginForm />
+              </StyledContent>
+            </Container>
+          </Drawer>
+
+        </Fragment>
+      </div>
     </>
   );
 }

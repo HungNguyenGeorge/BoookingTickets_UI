@@ -1,10 +1,5 @@
 import { useEffect } from 'react';
-import { useMsal } from '@azure/msal-react';
-import { Navigate , useRoutes, useNavigate  } from 'react-router-dom';
-// layouts
-// import DashboardLayout from './layouts/dashboard';
-// import SimpleLayout from './layouts/simple';
-//
+import { Navigate, useRoutes, useNavigate } from 'react-router-dom';
 import BlogPage from './pages/BlogPage';
 import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
@@ -17,22 +12,14 @@ import DashboardLayout from './layouts/dashboard';
 // ----------------------------------------------------------------------
 
 export default function Router() {
-  const { instance, accounts } = useMsal();
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (accounts.length === 0) {
-      navigate('/login');
-    }
-  },[]);
-
   const routes = useRoutes([
     {
       path: '/dashboard',
       element: <DashboardLayout />,
       children: [
-        { element: <Navigate to="/dashboard/app" />, index: true },
+        { element: <Navigate to="/dashboard/blog" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
         { path: 'user', element: <UserPage /> },
         { path: 'university', element: <UniversityPage /> },
