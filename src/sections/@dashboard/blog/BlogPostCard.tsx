@@ -1,13 +1,14 @@
 import PropTypes from 'prop-types';
 // @mui
-import { alpha, styled } from '@mui/material/styles';
-import { Box, Link, Card, Grid, Avatar, Typography, CardContent } from '@mui/material';
+import { alpha, styled, ThemeProvider } from '@mui/material/styles';
+import { Box, Link, Card, Grid, Avatar, Typography, CardContent, Button, Tooltip } from '@mui/material';
 // utils
 import { fDate } from '../../../utils/formatTime';
 import { fShortenNumber } from '../../../utils/formatNumber';
 //
 import SvgColor from '../../../components/svg-color';
 import Iconify from '../../../components/iconify';
+import { ThemeContext } from '@emotion/react';
 
 // ----------------------------------------------------------------------
 
@@ -36,7 +37,7 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
 const StyledInfo = styled('div')(({ theme }) => ({
   display: 'flex',
   flexWrap: 'wrap',
-  justifyContent: 'flex-end',
+  justifyContent: 'flex-start',
   marginTop: theme.spacing(3),
   color: theme.palette.text.disabled,
 }));
@@ -62,14 +63,19 @@ export default function BlogPostCard({ post, index }) {
   const latestPost = index === 1 || index === 2;
 
   const POST_INFO = [
-    { number: comment, icon: 'eva:message-circle-fill' },
+    { number: comment, icon: 'eva:archive-outline' },
     { number: view, icon: 'eva:eye-fill' },
-    { number: share, icon: 'eva:share-fill' },
+    // { number: share, icon: 'eva:share-fill' },
   ];
 
   return (
     <Grid item xs={12} sm={latestPostLarge ? 12 : 6} md={latestPostLarge ? 6 : 3}>
-      <Card sx={{ position: 'relative' }}>
+      <Card sx={{
+        position: 'relative',
+        ":hover": {
+          boxShadow: "0 2px 15px 0px rgba(0,0,0,0.4 )"
+        }
+      }}>
         <StyledCardMedia
           sx={{
             ...((latestPostLarge || latestPost) && {
@@ -131,7 +137,7 @@ export default function BlogPostCard({ post, index }) {
             }),
           }}
         >
-          <Typography gutterBottom variant="caption" sx={{ color: 'text.disabled', display: 'block' }}>
+          <Typography gutterBottom variant="caption" sx={{ color: 'text.disabled', display: 'block', fontSize: "1rem" }}>
             {fDate(createdAt, null)}
           </Typography>
 
@@ -144,29 +150,48 @@ export default function BlogPostCard({ post, index }) {
               ...((latestPostLarge || latestPost) && {
                 color: 'common.white',
               }),
+              cursor: 'pointer'
             }}
           >
             {title}
           </StyledTitle>
 
           <StyledInfo>
-            {POST_INFO.map((info, index) => (
+            <Tooltip title={`Total: ${10}`}>
               <Box
                 key={index}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
-                  ml: index === 0 ? 0 : 1.5,
-                  ...((latestPostLarge || latestPost) && {
-                    color: 'grey.500',
-                  }),
+                  cursor: 'default',
+                  mr: 1
                 }}
               >
-                <Iconify icon={info.icon} sx={{ width: 16, height: 16, mr: 0.5 }} />
-                <Typography variant="caption">{fShortenNumber(info.number)}</Typography>
+                <Iconify icon={"eva:inbox-fill"} sx={{ width: 16, height: 16, mr: 0.5 }} />
+                <Typography variant="caption">{fShortenNumber(10)}</Typography>
               </Box>
-            ))}
+            </Tooltip>
+            <Tooltip title={`Available: ${10}`}>
+              <Box
+                key={index}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  cursor: 'default'
+                }}
+              >
+                <Iconify icon={"eva:checkmark-circle-outline"} sx={{ width: 16, height: 16, mr: 0.5 }} />
+                <Typography variant="caption" >{fShortenNumber(10)}</Typography>
+              </Box>
+            </Tooltip>
+
           </StyledInfo>
+          <Button variant="contained" size="small" sx={{
+            float: "right",
+            marginBottom: "24px"
+          }}>
+            Book
+          </Button>
         </CardContent>
       </Card>
     </Grid>

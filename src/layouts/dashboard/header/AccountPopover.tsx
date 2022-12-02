@@ -57,7 +57,7 @@ export default function AccountPopover() {
 
 
   const handleLogout = () => {
-    dispatch({ type: "LOGIN_START" })
+    dispatch({ type: "LOGOUT" })
   }
 
   const handleOpen = (event) => {
