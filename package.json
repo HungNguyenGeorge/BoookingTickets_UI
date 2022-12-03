@@ -39,6 +39,8 @@
     "react-scripts": "^5.0.1",
     "simplebar-react": "^2.4.3",
     "styled-components": "^5.3.6",
+    "sweetalert2": "^11.6.15",
+    "sweetalert2-react-content": "^5.0.7",
     "use-axios-client": "^2.0.0",
     "vite-plugin-vue2": "^2.0.2",
     "web-vitals": "^3.0.3",

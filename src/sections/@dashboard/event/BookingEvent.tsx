@@ -1,13 +1,15 @@
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 // @mui
-import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox, Button, Container, Divider, Typography, styled, RadioGroup, FormControl, FormControlLabel, FormLabel, Radio, Box, Skeleton } from '@mui/material';
-import { LoadingButton } from '@mui/lab';
-// components
-import Iconify from '../../../components/iconify';
-import * as AuthenService from "../../../hooks/auth";
+import { Link, Stack, TextField, Container, Typography, styled, RadioGroup, FormControl, FormControlLabel, FormLabel, Radio, Box, Skeleton } from '@mui/material';
+
 import * as Tickets from "../../../hooks/ticket";
-import { AuthContext } from '../../../context/AuthContext';
+import * as Orders from "../../../hooks/order";
+import { LoadingButton } from '@mui/lab';
+
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+
+const MySwal = withReactContent(Swal)
 
 // ----------------------------------------------------------------------
 
@@ -22,23 +24,17 @@ const StyledContent = styled('div')(({ theme }) => ({
 }));
 
 
-export default function BookingForm({ event }) {
+export default function BookingForm({ event, onClose }) {
 
     const { _id } = event;
-    const navigate = useNavigate();
-
-    const { loading, error, dispatch } = useContext(AuthContext);
 
     const [quantity, setQuantity] = useState<number>(0);
     const [tickets, setTickets] = useState<Array<any>>([]);
     const [selectedTicket, setSelectedTicket] = useState<any>(null);
     const [ticketQuantity, setTicketQuantity] = useState<number>(0);
     const [loadingTickes, setLoadingTickes] = useState(true);
-
-    const [credentials, setCredentials] = useState({
-        email: "",
-        password: "",
-    });
+    const [ticketPrice, setTicketPrice] = useState(0);
+    const [createOrderSts, setCreateOrderSts] = useState<number>(0); // 0: not create, 1: creating, 2: success
 
     useEffect(() => {
         console.log("Event to booking: ", event);
@@ -46,29 +42,55 @@ export default function BookingForm({ event }) {
         const getData = async () => {
             try {
                 const res = await Tickets.getTicketsByEvent({ eventId: _id })
-                console.log("🚀 ~ file: BookingEvent.tsx:47 ~ getData ~ res", res)
                 setTickets(res.data)
                 setLoadingTickes(false);
-                setTicketQuantity(0)
+                setTicketQuantity(0);
             } catch (err) {
+                setLoadingTickes(false);
                 console.log("🚀 ~ file: LoginForm.tsx:37 ~ handleClick ~ err", err)
             }
 
         }
         getData();
-    }, [_id])
+    }, [_id, createOrderSts])
 
     useEffect(() => {
-        setTicketQuantity(selectedTicket?.available_quantity || 0)
-        setQuantity(0)
+        if (selectedTicket) {
+            const { price } = selectedTicket;
+            setTicketQuantity(selectedTicket?.available_quantity || 0)
+            setQuantity(0)
+            setTicketPrice(price)
+        }
+
     }, [selectedTicket])
 
     const handleChangeTicket = e => {
-        console.log("🚀 ~ file: BookingEvent.tsx:65 ~ handleChangeTicket ~ e", e)
         const selected = tickets.find(t => e.target.defaultValue === t._id)
-        console.log("🚀 ~ file: BookingEvent.tsx:66 ~ handleChangeTicket ~ selected", selected)
         if (selected) {
             setSelectedTicket(selected);
+        }
+    }
+
+    const onCreateOrder = async _ => {
+        setCreateOrderSts(1)
+        const orderData = {
+            event: _id,
+            ticket: selectedTicket._id,
+            totalPrice: quantity * ticketPrice,
+            quantity,
+            status: 0
+        }
+        try {
+            const res = await Orders.createOrder(orderData)
+            setCreateOrderSts(0)
+            MySwal.fire({
+                title: <p>Create successful!</p>,
+                icon: "success"
+            })
+            onClose();
+        } catch (err) {
+            setCreateOrderSts(0)
+            console.log("🚀 ~ file: LoginForm.tsx:37 ~ handleClick ~ err", err)
         }
     }
 
@@ -126,7 +148,13 @@ export default function BookingForm({ event }) {
                                     />
                                 </Stack>
                                 <Stack direction="row" spacing={2} sx={{ marginTop: 3, display: "flex", justifyContent: "flex-end" }}>
-                                    <Button variant="contained" disabled={quantity < 1}>Ok</Button>
+                                    <Typography variant="h5" sx={{ alignSelf: "center" }}>
+                                        {`${quantity * ticketPrice}$`}
+                                    </Typography>
+
+                                    <LoadingButton variant="contained" disabled={quantity < 1} onClick={onCreateOrder} loading={createOrderSts === 1}>
+                                        Ok
+                                    </LoadingButton>
                                 </Stack>
                             </Stack>
                             :
@@ -140,6 +168,7 @@ export default function BookingForm({ event }) {
                                     <Skeleton animation="wave" height={100} width={200} />
                                 </Stack>
                             </Box>
+
                     }
 
 

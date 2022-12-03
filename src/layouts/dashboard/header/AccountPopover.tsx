@@ -86,7 +86,7 @@ export default function AccountPopover() {
     (open: boolean) =>
       (event: React.KeyboardEvent | React.MouseEvent) => {
         setOpenLoginDrawer(open);
-        // dispatch({type: 'LOGOUT'})
+        dispatch({ type: 'LOGOUT' })
       };
 
   return (

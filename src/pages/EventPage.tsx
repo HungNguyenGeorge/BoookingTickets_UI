@@ -64,6 +64,10 @@ export default function BlogPage() {
     }
   }, [])
 
+  const onCloseBooking = () => {
+    setOpenBooking(false);
+  }
+
 
   const toggleDrawer =
     (open: boolean) =>
@@ -114,7 +118,7 @@ export default function BlogPage() {
               }
             }}
           >
-            <BookingForm event={currEvent} />
+            <BookingForm event={currEvent} onClose={onCloseBooking} />
           </Drawer>
 
         </Fragment>

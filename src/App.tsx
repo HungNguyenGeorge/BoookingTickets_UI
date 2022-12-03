@@ -2,7 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 // theme
 import ThemeProvider from './theme';
-// import './App.css'
+import './App.css'
 import Router from './routes';
 
 function App() {
