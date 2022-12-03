@@ -17,7 +17,7 @@ Install my-project with npm
     
 ## Tech Stack
 
-**Client:** ReactJS, Material UI, Formik, Vite builder 
+**Client:** ReactJS, Typescript, Material UI, Formik, Vite builder 
 
-**Server:** NodeJS, NestJS, MongoDB
+**Server:** NodeJS, Typescript, NestJS, MongoDB
 
