@@ -99,13 +99,9 @@ export default function BookingForm({ event, onClose }) {
             <Container maxWidth="sm">
                 <StyledContent>
                     <Typography variant="h4" gutterBottom>
-                        Booking {event.name}
+                        Booking for {event.name}
                     </Typography>
 
-                    <Typography variant="body2" sx={{ mb: 5 }}>
-                        Don’t have an account? {''}
-                        <Link variant="subtitle2">Get started</Link>
-                    </Typography>
                     {
                         (!loadingTickes || tickets.length > 0) ?
                             <Stack>
