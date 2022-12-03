@@ -1,4 +1,5 @@
 import { createContext, Dispatch, useEffect, useReducer } from "react";
+import * as AuthenService from "../hooks/auth";
 
 const localUser = localStorage.getItem("user")
 interface IUserDispatch {
@@ -57,9 +58,21 @@ const AuthReducer = (state, action) => {
   }
 };
 
+const isValidToken = async (sToken, callbackErr): Promise<void> => {
+  try {
+    const res = await AuthenService.checkJWT({ jwt: sToken });
+  } catch (err) {
+    callbackErr()
+    console.log("🚀 ~ file: LoginForm.tsx:37 ~ handleClick ~ err", err)
+  }
+}
+
 export const AuthContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
   useEffect(() => {
+    if (state.user) {
+      isValidToken(state.user?.apiToken, () => dispatch({ type: "LOGOUT" }));
+    }
     localStorage.setItem("user", JSON.stringify(state.user));
   }, [state.user]);
 

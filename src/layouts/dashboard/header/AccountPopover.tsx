@@ -8,6 +8,7 @@ import account from '../../../_mock/account';
 import { AuthContext } from "../../../context/AuthContext";
 import { useNavigate } from 'react-router-dom';
 import { LoginForm } from '../../../sections/auth/login';
+import { RegisterForm } from '../../../sections/auth/register';
 import Iconify from '../../../components/iconify';
 
 // ----------------------------------------------------------------------
@@ -43,6 +44,7 @@ export default function AccountPopover() {
   const navigate = useNavigate();
   const [openAccountPopover, setOpenAccountPopover] = useState(null);
   const [openLoginDrawer, setOpenLoginDrawer] = useState(false);
+  const [openRegisterDrawer, setOpenRegisterDrawer] = useState(false);
   const { user, dispatch, openLogin } = useContext(AuthContext);
   const { instance, accounts } = useMsal();
 
@@ -67,6 +69,11 @@ export default function AccountPopover() {
   const handleLogout = () => {
     dispatch({ type: "LOGOUT" })
   }
+  const handleRegisterSuccess = (newUser) => {
+    setOpenLoginDrawer(true);
+    setOpenRegisterDrawer(false);
+    dispatch({ type: "LOGOUT" });
+  }
 
   const handleOpen = (event) => {
     setOpenAccountPopover(event.currentTarget);
@@ -82,10 +89,23 @@ export default function AccountPopover() {
     setOpenAccountPopover(false)
   };
 
+  const toggleOpenRegister = () => {
+    setOpenRegisterDrawer(true);
+    toggleDrawer(true);
+    setOpenAccountPopover(false)
+  };
+
   const toggleDrawer =
     (open: boolean) =>
       (event: React.KeyboardEvent | React.MouseEvent) => {
         setOpenLoginDrawer(open);
+        dispatch({ type: 'LOGOUT' })
+      };
+
+  const toggleRegisterDrawer =
+    (open: boolean) =>
+      (event: React.KeyboardEvent | React.MouseEvent) => {
+        setOpenRegisterDrawer(open);
         dispatch({ type: 'LOGOUT' })
       };
 
@@ -164,7 +184,7 @@ export default function AccountPopover() {
               <MenuItem onClick={_ => toggleOpenLogin()} sx={{ m: 1 }}>
                 Login
               </MenuItem>
-              <MenuItem onClick={() => handleLogout()} sx={{ m: 1 }}>
+              <MenuItem onClick={() => toggleOpenRegister()} sx={{ m: 1 }}>
                 Register
               </MenuItem>
             </>
@@ -195,15 +215,18 @@ export default function AccountPopover() {
 
                 <Typography variant="body2" sx={{ mb: 5 }}>
                   Don’t have an account? {''}
-                  <Link variant="subtitle2">Get started</Link>
+                  <Link variant="subtitle2" sx={{ cursor: "pointer" }} onClick={_ => {
+                    setOpenLoginDrawer(false);
+                    setOpenRegisterDrawer(true);
+                  }}>Get started</Link>
                 </Typography>
 
                 <Stack direction="row" spacing={2}>
-                  <Button fullWidth size="large" color="inherit" variant="outlined">
+                  <Button fullWidth size="large" color="inherit" variant="outlined" disabled={true}>
                     <Iconify icon="eva:facebook-fill" color="#1877F2" width={22} height={22} />
                   </Button>
 
-                  <Button fullWidth size="large" color="inherit" variant="outlined">
+                  <Button fullWidth size="large" color="inherit" variant="outlined" disabled={true}>
                     <Iconify icon="eva:twitter-fill" color="#1C9CEA" width={22} height={22} />
                   </Button>
                 </Stack>
@@ -215,6 +238,53 @@ export default function AccountPopover() {
                 </Divider>
 
                 <LoginForm />
+              </StyledContent>
+            </Container>
+          </Drawer>
+
+          <Drawer
+            anchor={"right"}
+            open={openRegisterDrawer}
+            onClose={toggleRegisterDrawer(false)}
+            PaperProps={{
+
+              sx: {
+                width: 500,
+                p: 5
+              }
+            }}
+          >
+            <Container maxWidth="sm">
+              <StyledContent>
+                <Typography variant="h4" gutterBottom>
+                  Sign on to Booking
+                </Typography>
+
+                <Typography variant="body2" sx={{ mb: 5 }}>
+                  Have an account? {''}
+                  <Link variant="subtitle2" sx={{ cursor: "pointer" }} onClick={_ => {
+                    setOpenLoginDrawer(true);
+                    setOpenRegisterDrawer(false);
+                  }}>Let's start</Link>
+                </Typography>
+
+                <Stack direction="row" spacing={2}>
+                  <Button fullWidth size="large" color="inherit" variant="outlined" disabled={true}>
+                    <Iconify icon="eva:facebook-fill" color="#1877F2" width={22} height={22} />
+                  </Button>
+
+                  <Button fullWidth size="large" color="inherit" variant="outlined" disabled={true}>
+                    <Iconify icon="eva:twitter-fill" color="#1C9CEA" width={22} height={22} />
+                  </Button>
+                </Stack>
+
+                <Divider sx={{ my: 3 }}>
+                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    OR
+                  </Typography>
+                </Divider>
+
+                <RegisterForm onSuccess={(newUser) => handleRegisterSuccess(newUser)} />
               </StyledContent>
             </Container>
           </Drawer>

@@ -89,6 +89,11 @@ export default function BookingForm({ event, onClose }) {
             })
             onClose();
         } catch (err) {
+            MySwal.fire({
+                title: <p>Error!</p>,
+                text: err.message,
+                icon: "error"
+            })
             setCreateOrderSts(0)
             console.log("🚀 ~ file: LoginForm.tsx:37 ~ handleClick ~ err", err)
         }
