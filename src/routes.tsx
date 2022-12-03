@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Navigate, useRoutes, useNavigate } from 'react-router-dom';
-import BlogPage from './pages/BlogPage';
+import BlogPage from './pages/EventPage';
 import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';

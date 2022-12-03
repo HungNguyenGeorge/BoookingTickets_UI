@@ -18,7 +18,7 @@ const StyledCardMedia = styled('div')({
 });
 
 const StyledTitle = styled(Link)({
-  height: 44,
+  // height: 44,
   overflow: 'hidden',
   WebkitLineClamp: 2,
   display: '-webkit-box',
@@ -38,7 +38,7 @@ const StyledInfo = styled('div')(({ theme }) => ({
   display: 'flex',
   flexWrap: 'wrap',
   justifyContent: 'flex-start',
-  marginTop: theme.spacing(3),
+  // marginTop: theme.spacing(3),
   color: theme.palette.text.disabled,
 }));
 
@@ -52,21 +52,16 @@ const StyledCover = styled('img')({
 
 // ----------------------------------------------------------------------
 
-BlogPostCard.propTypes = {
-  post: PropTypes.object.isRequired,
+EventCard.propTypes = {
+  event: PropTypes.object.isRequired,
   index: PropTypes.number,
 };
 
-export default function BlogPostCard({ post, index }) {
-  const { cover, title, view, comment, share, author, createdAt } = post;
+export default function EventCard({ event, index, onBooking }) {
+  const { cover, name, description, start_date, end_date } = event;
   const latestPostLarge = index === 0;
   const latestPost = index === 1 || index === 2;
 
-  const POST_INFO = [
-    { number: comment, icon: 'eva:archive-outline' },
-    { number: view, icon: 'eva:eye-fill' },
-    // { number: share, icon: 'eva:share-fill' },
-  ];
 
   return (
     <Grid item xs={12} sm={latestPostLarge ? 12 : 6} md={latestPostLarge ? 6 : 3}>
@@ -111,8 +106,8 @@ export default function BlogPostCard({ post, index }) {
             }}
           />
           <StyledAvatar
-            alt={author.name}
-            src={author.avatarUrl}
+            alt={name}
+            src={name}
             sx={{
               ...((latestPostLarge || latestPost) && {
                 zIndex: 9,
@@ -124,7 +119,7 @@ export default function BlogPostCard({ post, index }) {
             }}
           />
 
-          <StyledCover alt={title} src={cover} />
+          <StyledCover alt={name} src={`/assets/images/covers/cover_${++index}.jpg`} />
         </StyledCardMedia>
 
         <CardContent
@@ -138,7 +133,7 @@ export default function BlogPostCard({ post, index }) {
           }}
         >
           <Typography gutterBottom variant="caption" sx={{ color: 'text.disabled', display: 'block', fontSize: "1rem" }}>
-            {fDate(createdAt, null)}
+            {fDate(start_date, "dd/mm/yyyy")} - {fDate(end_date, "dd/mm/yyyy")}
           </Typography>
 
           <StyledTitle
@@ -153,11 +148,11 @@ export default function BlogPostCard({ post, index }) {
               cursor: 'pointer'
             }}
           >
-            {title}
+            {name}
           </StyledTitle>
 
           <StyledInfo>
-            <Tooltip title={`Total: ${10}`}>
+            {/* <Tooltip title={`Total: ${10}`}>
               <Box
                 key={index}
                 sx={{
@@ -183,13 +178,18 @@ export default function BlogPostCard({ post, index }) {
                 <Iconify icon={"eva:checkmark-circle-outline"} sx={{ width: 16, height: 16, mr: 0.5 }} />
                 <Typography variant="caption" >{fShortenNumber(10)}</Typography>
               </Box>
-            </Tooltip>
-
+            </Tooltip> */}
+            <Typography variant="caption" >{description}</Typography>
           </StyledInfo>
-          <Button variant="contained" size="small" sx={{
-            float: "right",
-            marginBottom: "24px"
-          }}>
+          <Button
+            variant="contained"
+            size="small"
+            sx={{
+              float: "right",
+              marginBottom: "24px"
+            }}
+            onClick={() => onBooking()}
+          >
             Book
           </Button>
         </CardContent>

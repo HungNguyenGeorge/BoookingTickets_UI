@@ -14,11 +14,11 @@ const StyledPopper = styled((props) => <Popper open={false} placement="bottom-st
 
 // ----------------------------------------------------------------------
 
-BlogPostsSearch.propTypes = {
+EventsSearch.propTypes = {
   posts: PropTypes.array.isRequired,
 };
 
-export default function BlogPostsSearch({ posts }) {
+export default function EventsSearch({ posts }) {
   return (
     <Autocomplete
       sx={{ width: 280 }}

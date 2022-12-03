@@ -42,18 +42,26 @@ const StyledContent = styled('div')(({ theme }) => ({
 export default function AccountPopover() {
   const navigate = useNavigate();
   const [openAccountPopover, setOpenAccountPopover] = useState(null);
-  const [openLogin, setOpenLogin] = useState(false);
-  const { user, dispatch } = useContext(AuthContext);
+  const [openLoginDrawer, setOpenLoginDrawer] = useState(false);
+  const { user, dispatch, openLogin } = useContext(AuthContext);
   const { instance, accounts } = useMsal();
 
   useEffect(() => {
     if (user) {
-      setOpenLogin(false)
+      setOpenLoginDrawer(false)
     }
     return () => {
-      setOpenLogin(false)
+      setOpenLoginDrawer(false)
     }
   }, [user])
+
+  useEffect(() => {
+    if (openLogin) {
+      setOpenLoginDrawer(true);
+    } else {
+      return;
+    }
+  }, [openLogin])
 
 
   const handleLogout = () => {
@@ -69,7 +77,7 @@ export default function AccountPopover() {
   };
 
   const toggleOpenLogin = () => {
-    setOpenLogin(true);
+    setOpenLoginDrawer(true);
     toggleDrawer(true);
     setOpenAccountPopover(false)
   };
@@ -77,7 +85,8 @@ export default function AccountPopover() {
   const toggleDrawer =
     (open: boolean) =>
       (event: React.KeyboardEvent | React.MouseEvent) => {
-        setOpenLogin(open);
+        setOpenLoginDrawer(open);
+        // dispatch({type: 'LOGOUT'})
       };
 
   return (
@@ -168,7 +177,7 @@ export default function AccountPopover() {
         <Fragment>
           <Drawer
             anchor={"right"}
-            open={openLogin}
+            open={openLoginDrawer}
             onClose={toggleDrawer(false)}
             PaperProps={{
 
