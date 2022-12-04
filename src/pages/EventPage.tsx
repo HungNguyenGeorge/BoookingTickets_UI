@@ -36,7 +36,7 @@ const StyledContent = styled('div')(({ theme }) => ({
 export default function BlogPage() {
 
   const [openBooking, setOpenBooking] = useState(false);
-  const [events, setEvents] = useState(POSTS);
+  const [events, setEvents] = useState([]);
   const [currEvent, setCurrEvent] = useState(null)
   const { user, dispatch } = useContext(AuthContext);
 
@@ -87,18 +87,10 @@ export default function BlogPage() {
           <Typography variant="h4" gutterBottom>
             Events
           </Typography>
-          {/* <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            New Post
-          </Button> */}
         </Stack>
 
-        {/* <Stack mb={5} direction="row" alignItems="center" justifyContent="space-between">
-          <EventsSearch posts={events} />
-          <EventsSort options={SORT_OPTIONS} />
-        </Stack> */}
-
         <Grid container spacing={3}>
-          {events.map((event, index) => (
+          {events.filter(event => { return new Date().toISOString() < new Date(event.end_date).toISOString() && event.published }).map((event, index) => (
             <EventCard key={index} event={event} index={index} onBooking={_ => handleOpenBookings(event)} />
           ))}
         </Grid>

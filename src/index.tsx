@@ -4,8 +4,39 @@ import { HelmetProvider } from 'react-helmet-async';
 
 import { AuthContextProvider } from "./context/AuthContext";
 import App from './App';
+import axios from 'axios';
 // import * as serviceWorker from './serviceWorker';
 // ----------------------------------------------------------------------
+
+
+
+// For GET requests
+axios.interceptors.request.use(
+  (req) => {
+    const sLocalUser = localStorage.getItem("user");
+    const localUser = JSON.parse(sLocalUser);
+    if (localUser) {
+      req.headers.Authorization = `Bearer ${localUser.apiToken}`;
+    }
+    return req;
+  },
+  (err) => {
+    return Promise.reject(err);
+  }
+);
+
+// For POST requests
+axios.interceptors.response.use(
+  (res) => {
+    if (res.status === 401) {
+      location.reload();
+    }
+    return res;
+  },
+  (err) => {
+    return Promise.reject(err);
+  }
+);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 

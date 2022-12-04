@@ -8,6 +8,8 @@ import { LoadingButton } from '@mui/lab';
 
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import { formatISO } from 'date-fns';
+import { fDate } from '../../../utils/formatTime';
 
 const MySwal = withReactContent(Swal)
 
@@ -120,7 +122,10 @@ export default function BookingForm({ event, onClose }) {
                                         >
                                             {
                                                 tickets.map((t, index) => {
-                                                    const ticketLabel = `${t.name} at ${t.description} `
+                                                    const ticketLabel = `${fDate(t.name, "dd-MM-yyyy")} at ${formatISO(new Date(t.description), {
+                                                        representation: "time"
+                                                    }).slice(0, 5)
+                                                        } `
                                                     return <FormControlLabel id={t._id} key={index} value={t._id} control={<Radio />} label={ticketLabel} />
                                                 })
                                             }

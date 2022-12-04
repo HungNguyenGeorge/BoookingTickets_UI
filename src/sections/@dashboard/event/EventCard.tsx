@@ -133,7 +133,7 @@ export default function EventCard({ event, index, onBooking }) {
           }}
         >
           <Typography gutterBottom variant="caption" sx={{ color: 'text.disabled', display: 'block', fontSize: "1rem" }}>
-            {fDate(start_date, "dd/mm/yyyy")} - {fDate(end_date, "dd/mm/yyyy")}
+            {fDate(start_date, "dd/MM/yyyy")} - {fDate(end_date, "dd/MM/yyyy")}
           </Typography>
 
           <StyledTitle
@@ -152,33 +152,6 @@ export default function EventCard({ event, index, onBooking }) {
           </StyledTitle>
 
           <StyledInfo>
-            {/* <Tooltip title={`Total: ${10}`}>
-              <Box
-                key={index}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  cursor: 'default',
-                  mr: 1
-                }}
-              >
-                <Iconify icon={"eva:inbox-fill"} sx={{ width: 16, height: 16, mr: 0.5 }} />
-                <Typography variant="caption">{fShortenNumber(10)}</Typography>
-              </Box>
-            </Tooltip>
-            <Tooltip title={`Available: ${10}`}>
-              <Box
-                key={index}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  cursor: 'default'
-                }}
-              >
-                <Iconify icon={"eva:checkmark-circle-outline"} sx={{ width: 16, height: 16, mr: 0.5 }} />
-                <Typography variant="caption" >{fShortenNumber(10)}</Typography>
-              </Box>
-            </Tooltip> */}
             <Typography variant="caption" >{description}</Typography>
           </StyledInfo>
           <Button
